@@ -14,11 +14,12 @@ class curseView: public View{
     Engine& engine;
     WINDOW* game_win;
 
+    void render();
 
-    public:
+  public:
     curseView(int row, int col, Engine& m);
     ~curseView();
-    void update(int row, int col, char c);
+    void update(int row, int col, char c) override;
     void displayView() override;
 };
 

@@ -9,13 +9,13 @@
 
 class Engine;
 
-class Written: public View{
+class textView: public View{
   Engine& engine;
-  WINDOW *text_win
+  WINDOW *text_win;
 
  public:
-  Written(int rows, int cols, Engine& e);
-  void update(int row, const std::string& msg);
+  textView(int rows, int cols, Engine& e);
+  void update(int row, const std::string& msg) override;
   void displayView() override;
 };
 #endif

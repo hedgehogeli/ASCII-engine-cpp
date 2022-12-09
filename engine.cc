@@ -1,11 +1,12 @@
 #include "engine.h"
 #include "curseView.h"
-#include "curseKeyboard.h"
+#include "textView.h"
+// #include "curseKeyboard.h"
 
 Engine::Engine(size_t r, size_t c): rows{r}, cols{c} {
-    for (int i=0; i < r; ++i){
+    for (size_t i=0; i < r; ++i){
         std::vector<Cell> row;
-        for (int j=0; j < c; ++j){
+        for (size_t j=0; j < c; ++j){
             row.emplace_back(Cell(i, j));
         }
         grid.emplace_back(row);
@@ -23,5 +24,9 @@ initscr();
     */
 
 void Engine::render() {
-    views[0].render();
+    updateViews(0, "hey there");
+    getch();
+    displayViews(); 
+    // views[0]->render();
+    // views[1]->update("hey there");
 }

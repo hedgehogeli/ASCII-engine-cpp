@@ -18,13 +18,15 @@ class Engine : public Model{
 
     Engine(size_t r, size_t c);
 
-    void addObj(GameObj &o); // insert obj to grid
-    void rmObj(GameObj &o); // rm obj
+    // void addObj(GameObj &o); // insert obj to grid
+    // void rmObj(GameObj &o); // rm obj
 
     // spawn obj
     // despawn obj
 
     void render(); // render grid
+
+    friend class curseView;
 
 };
 
