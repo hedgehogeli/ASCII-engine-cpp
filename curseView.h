@@ -14,7 +14,7 @@ class curseView: public View{
     Engine& engine;
     WINDOW* game_win;
 
-    void render();
+    // void renderCells();
 
   public:
     curseView(int row, int col, Engine& m);

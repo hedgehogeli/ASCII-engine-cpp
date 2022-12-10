@@ -15,8 +15,8 @@ void Cell::rmObj(GameObj* o) { // rm obj from list
 // should cell be working with raw gameboj ptrs here?
 
 char Cell::getChar() const { 
-    std::cout << count << std::endl;
-    std::cout << &objList << std::endl;
+    // std::cout << count << std::endl;
+    // std::cout << &objList << std::endl;
     if (objList.empty()) { return ' '; }
     else return (*(objList.cbegin()))->charAt(r, c);
 }

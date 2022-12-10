@@ -24,7 +24,9 @@ class Engine : public Model{
     // spawn obj
     // despawn obj
 
-    void render(); // render grid
+    void play(); 
+
+    void renderCells(); // resolve which char each cell should show
 
     friend class curseView;
 

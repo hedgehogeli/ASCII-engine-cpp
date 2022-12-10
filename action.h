@@ -1,6 +1,6 @@
 #ifndef ___ACTION__H___
 #define ___ACTION__H___
 
-enum Action { INVALID = 0, UP, RIGHT, DOWN, LEFT, NONE };
+enum Action { INVALID = 0, UP, RIGHT, DOWN, LEFT, SPACE, QUIT, NONE };
 
 #endif

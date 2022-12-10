@@ -20,11 +20,11 @@ void Model::displayViews(){
 void Model::addView(std::unique_ptr<View> v){
   views.emplace_back(std::move(v));
 }
-// void Model::addController(std::unique_ptr<Controller> c){
-//   control = std::move(c);
-// }
+
+void Model::addController(std::unique_ptr<Controller> c){
+  control = std::move(c);
+}
 
 Action Model::getAction(){
-//   return control->getAction();
-    return Action{};
+    return control->getAction();
 }

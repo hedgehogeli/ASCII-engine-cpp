@@ -10,11 +10,11 @@
 
 class Mapping;
 
-class CurseKeyboard: public Controller{
-  std::map<int,Action> mapping; 
+class curseControl: public Controller{
+    std::map<int,Action> mapping; 
 
-  Action action() override;
- public:
-  CurseKeyboard();
+    Action action() override;
+  public:
+    curseControl();
 };
 #endif
