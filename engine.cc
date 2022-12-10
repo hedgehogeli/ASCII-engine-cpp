@@ -4,10 +4,10 @@
 // #include "curseKeyboard.h"
 
 Engine::Engine(size_t r, size_t c): rows{r}, cols{c} {
-    for (size_t i=0; i < r; ++i){
+    for (size_t i=0; i<r; ++i) {
         std::vector<Cell> row;
-        for (size_t j=0; j < c; ++j){
-            row.emplace_back(Cell(i, j));
+        for (size_t j=0; j<c; ++j) {
+            row.emplace_back(Cell(i, j)); // ??????
         }
         grid.emplace_back(row);
     }
@@ -17,11 +17,7 @@ Engine::Engine(size_t r, size_t c): rows{r}, cols{c} {
     // addController(std::move(std::make_unique<curseKeyboard>()));
 }
 
-/*
-initscr();
-    noecho();
-    curs_set(0);
-    */
+
 
 void Engine::render() {
     updateViews(0, "hey there");

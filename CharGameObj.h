@@ -1,7 +1,7 @@
 #ifndef CHAR_H
 #define CHAR_H
 
-#include <GameObj.h>
+#include "gameObj.h"
 #include <vector>
 #include <utility>
 #include <cstddef>

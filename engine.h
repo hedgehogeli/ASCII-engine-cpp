@@ -1,7 +1,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 #include "model.h"
-#include "GameObj.h"
+#include "gameObj.h"
 #include "cell.h"
 #include <list>
 #include <vector>

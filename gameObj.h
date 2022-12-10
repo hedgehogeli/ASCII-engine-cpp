@@ -14,7 +14,7 @@ class GameObj {
     // collider class attachment
     // vector of posns the obj occupies
 
-    // virtual void computePosns() = 0;
+    virtual void computePosns() = 0;
 
   public:
     GameObj(size_t r, size_t c, int height);

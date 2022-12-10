@@ -1,7 +1,7 @@
 #ifndef RECT_GAME_OBJ_H
 #define RECT_GAME_OBJ_H
 
-#include <GameObj.h>
+#include "gameObj.h"
 #include <cstddef>
 #include <map>
 #include <utility>

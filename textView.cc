@@ -9,7 +9,7 @@ textView::textView(int rows, int cols, Engine& e): engine{e} {
     int yStart = yMax/2 - (rows+2+3)/2 + rows; 
     int xStart = xMax/2 - (cols+2)/2;
 
-    text_win = newwin(rows, cols, yStart, xStart);
+    text_win = newwin(3, cols, yStart+2, xStart);
     wprintw(text_win, "placeholder init");
     wrefresh(text_win);
 } 
