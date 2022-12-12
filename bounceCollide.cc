@@ -1,4 +1,5 @@
 #include "bounceCollide.h"
+#include "gameObj.h"
 
 bounceCollider::bounceCollider(GameObj *obj): Collider{obj} {}
 

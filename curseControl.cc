@@ -13,12 +13,11 @@ curseControl::curseControl() {
     mapping[KEY_DOWN] = Action::DOWN;
     mapping[KEY_LEFT] = Action::LEFT;
     mapping[' '] = Action::SPACE;
-    mapping['\033'] = Action::QUIT;
+    mapping['q'] = Action::QUIT;
 }
 
 Action curseControl::action() {
-    char n;
-    while ( (n = getch()) == ERR ) continue;
+    char n = getch();
 
     if ( mapping.find(n) != mapping.end() ) {
         return mapping[n];

@@ -7,7 +7,6 @@
 #include <map>
 #include <ncurses.h>
 
-
 class Mapping;
 
 class curseControl: public Controller{

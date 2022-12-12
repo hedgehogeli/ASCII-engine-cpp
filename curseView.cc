@@ -10,6 +10,9 @@ curseView::curseView(int rows, int cols, Engine& e): width{rows}, height{cols}, 
     int xStart = xMax/2 - (cols+2)/2;   // and add 2 for border chars
 
     game_win = newwin(rows+2, cols+2, yStart, xStart);
+    timeout(50);
+    keypad(game_win, true);    
+    keypad(stdscr, true);
     wborder(game_win, '|', '|', '-', '-', '+', '+', '+', '+');
     wrefresh(game_win);
 }

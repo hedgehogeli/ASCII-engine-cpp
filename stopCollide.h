@@ -6,7 +6,8 @@
 class stopCollider : public Collider {
   public:
     stopCollider(GameObj *obj);
-    void collide() override;
+    void stopMvmt();
+    virtual void collide() override;
 };
 
 #endif

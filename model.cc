@@ -1,7 +1,4 @@
 #include "model.h"
-// #include "standard.h"
-// #include "keyboard.h"
-// #include "curseControl.h"
 #include "curseView.h"
 #include "textView.h"
 

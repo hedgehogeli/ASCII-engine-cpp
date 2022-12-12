@@ -1,11 +1,12 @@
 #ifndef MODEL_H
 #define MODEL_H
 
-#include <memory>
-#include <vector>
 #include "action.h"
 #include "controller.h"
 #include "view.h"
+#include <memory>
+#include <vector>
+
 
 enum Action;
 

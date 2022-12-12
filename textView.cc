@@ -1,7 +1,8 @@
 #include "textView.h"
+#include "engine.h"
 #include <iostream>
 #include <cstring>
-#include "engine.h"
+
 
 textView::textView(int rows, int cols, Engine& e): engine{e} {
     int yMax, xMax;
@@ -10,7 +11,7 @@ textView::textView(int rows, int cols, Engine& e): engine{e} {
     int xStart = xMax/2 - (cols+2)/2;
 
     text_win = newwin(3, cols, yStart+2, xStart);
-    wprintw(text_win, "placeholder init");
+    // wprintw(text_win, "placeholder init");
     wrefresh(text_win);
 } 
 
@@ -20,6 +21,8 @@ void textView::displayView(){
 
 // 0 <= row <= 2
 void textView::update(int row = 0, const std::string& msg = "") {
+    mvwprintw(text_win, row, 0, // 80 spaces:
+      "                                                                                ");
     mvwprintw(text_win, row, 0, msg.c_str());
     displayView();
 }

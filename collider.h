@@ -1,16 +1,22 @@
-#ifndef COLLIDER_H
-#define COLLIDER_H
+#ifndef __COLLIDER_H__
+#define __COLLIDER_H__
 
-#include "gameObj.h"
-#include "cell.h"
+class GameObj;
+class Cell;
 
 class Collider {
   protected:
+    bool collided; // has this collision acted this turn
     GameObj* obj;
+     
   public:
     Collider(GameObj *obj);
-    virtual void collide() {}
+    void resetCollision() { collided = false; }
+    virtual void collide() {}           // collide()s default to do nothing
     virtual void collide(Cell& c) {}
+    void runCollision();
+    void runCollision(Cell&c);
+    virtual ~Collider();  
 };
 
 #endif

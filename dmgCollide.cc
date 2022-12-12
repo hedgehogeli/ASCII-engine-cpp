@@ -1,4 +1,5 @@
 #include "dmgCollide.h"
+#include "gameObj.h"
 
 dmgCollider::dmgCollider(GameObj *obj): Collider{obj} {}
 
