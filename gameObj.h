@@ -14,6 +14,7 @@ class Engine;
 class GameObj {
   protected:
     size_t r, c;
+    int length, width;
     int height;
     Engine& e;
 
@@ -26,10 +27,9 @@ class GameObj {
     // motion vector
     std::list<std::unique_ptr<Collider>> colliders;
     
-    
-
+    void reindexBmp(int dY, int dX);
     void computeCells();
-    void tryMove();
+    void computeCollisions();
     void moveCoords();
 
   public:

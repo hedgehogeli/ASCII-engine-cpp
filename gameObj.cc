@@ -1,6 +1,6 @@
 #include "gameObj.h"
 #include "engine.h"
-
+#include <algorithm>
 #include <string>
 #include "ncurses.h"
 
@@ -25,12 +25,46 @@ GameObj::GameObj(size_t r, size_t c, int height, Engine& e, std::map<std::pair<i
   r{r}, c{c}, height{height}, e{e}, mvmtY{0}, mvmtX{0}, wait{1}, period{1}, 
   bmp{bitmap} {}
 
+
 void GameObj::computeCells() {
     occupiedCells.reserve(bmp.size());
     occupiedCells.clear();
-    for (auto it : bmp) {
-        occupiedCells.push_back(&(e.getGrid()[it.first.first + r][it.first.second + c]));
+
+    int minr, maxr, minc, maxc;
+    minr = minc = 10000; // arbitrarily large number
+    maxr = maxc = 0; 
+    for (auto& it : bmp) {
+        int y = it.first.first;
+        int x = it.first.second; 
+
+        minc = std::min(minc, y);
+        maxc = std::max(maxc, y);
+        minr = std::min(minr, x);
+        maxr = std::max(maxr, x);
+        
+        occupiedCells.push_back(&(e.getGrid()[y + r][x + c]));
     }
+
+    if (minr || minc) {
+        reindexBmp(minc, minr);
+    }
+
+    // new rectangular dimensions
+    length = maxc - minc + 1;
+    width = maxr - minr + 1;
+}
+
+void GameObj::reindexBmp(int dY, int dX) {
+    std::map<std::pair<int,int>, char> newBmp;
+    for (auto& it : bmp) {
+        int y = it.first.first;
+        int x = it.first.second; 
+        newBmp[std::make_pair(y - dY, x - dX)] = it.second;
+    }
+    std::swap(newBmp, bmp);
+
+    r += dY; 
+    c += dX;
 }
 
 
@@ -55,6 +89,8 @@ Collider* GameObj::addCollider(std::unique_ptr<Collider> c){
 void GameObj::destroyCharAt(Cell& posn) {
     posn.rmObj(this);
     bmp.erase(std::make_pair(posn.r - r, posn.c - c));
+    auto it = std::find(occupiedCells.begin(), occupiedCells.end(), &posn);
+    occupiedCells.erase(it);
 }
 
 
@@ -68,7 +104,8 @@ void GameObj::mvmtCollide() {
 }
 void GameObj::dmgCollide(Cell& cell) {
     for (auto& it : colliders) {
-        it->runCollision(cell);
+        // it->runCollision(cell);
+        it->collide(cell);
     }
 }
 
@@ -77,13 +114,14 @@ void GameObj::dmgCollide(Cell& cell) {
 bool GameObj::collideAt(Cell& cell) {
     std::vector<GameObj*> collidingObjs = cell.getObjsAtHeight(height);
     bool collision = !collidingObjs.empty();
-    for (auto it : collidingObjs) {
-        it->mvmtCollide();
-        it->dmgCollide(cell);
-    }
-    if (collision) { // if collisions happened, then call my own collisions
+    if (collision) {
+        for (auto it : collidingObjs) {
+            it->mvmtCollide();
+            it->dmgCollide(cell);
+        }
+        // then call my own collisions
         mvmtCollide();
-        dmgCollide(cell);
+        // dmgCollide(cell); // THIS DOES'NT DO ANYTHING B/C R,C AREN'T UPDATED. DMGCOLLIDING MYSELF ON A NONEXISTENT BMP KEY
     }
     return collision; // return if 'this' collided
 } 
@@ -108,20 +146,23 @@ void GameObj::move() {
     // TODO: CHECK FOR WALL BOUNDS HERE 
     // the rectangular dimensions should be calculated in computeCells !
 
-    tryMove(); // move and see if collide. if collide, then act on collisions. 
+    computeCollisions(); // move and see if collide. if collide, then act on collisions. 
     // may need to call tryMove to see if resulting mutations on mvmtXY result in further collision
-
 
     // collisions have been resolved, lift obj then place it down into destination cells
     moveCoords();
 
-
     // TODO: somehow signal a removal if size of occupiedCells == 0
-
+    // this is stand-in
+    if (bmp.empty()) {
+        height = -1;
+        setMvmt(0,0);
+        e.createStopCollider(this);
+    }
     
 }
 
-void GameObj::tryMove() {
+void GameObj::computeCollisions() {
     for (auto it : bmp) { // for every cell 'this' currently occupies,
         int y = it.first.first;
         int x = it.first.second; 
@@ -136,16 +177,20 @@ void GameObj::tryMove() {
 
         Cell& curCell = e.getGrid()[toR][toC]; // get its destination  cell
         if (curCell.contains(this)) { continue; } // i am already in destination
-        collideAt(curCell); // collide into destination cell
+        bool collision = collideAt(curCell); // collide into destination cell
+        if (collision) { dmgCollide(e.getGrid()[r+y][x+c]); }
         // ^ any pixel destruction and mvmt mutation due to collision happens here
+
+        // MY R AND C ARE NOT UPDATED, SO I'M NOT ACTUALLY OCCUPYING THE CURCELL. 
     }
+    computeCells();
 }
 
 // removes 'this' obj from current cells, then moves it into destination 
 // cells, defined by 'this's mvmt vector
 // precondition: assumes it is SAFE to do so
 void GameObj::moveCoords() {
-e.updateViews(0, "("+std::to_string(r)+","+std::to_string(c)+") -> ("+ std::to_string(r+mvmtY) + "," + std::to_string(c+mvmtX) + ")" );
+// e.updateViews(0, "("+std::to_string(r)+","+std::to_string(c)+") -> ("+ std::to_string(r+mvmtY) + "," + std::to_string(c+mvmtX) + ")" );
     for (auto c : occupiedCells) {
         c->rmObj(this);
     }

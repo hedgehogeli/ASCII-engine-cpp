@@ -61,15 +61,18 @@ Collider* Engine::createStopCollider(GameObj* obj) {
     obj->addCollider(std::move(collider));
     return ptr;
 }
-
 Collider* Engine::createBounceCollider(GameObj* obj) {
     std::unique_ptr<Collider> collider = std::make_unique<bounceCollider>(obj);
     Collider* ptr = collider.get();
     obj->addCollider(std::move(collider));
     return ptr;
 }
-
-
+Collider* Engine::createDmgCollider(GameObj* obj) {
+    std::unique_ptr<Collider> collider = std::make_unique<dmgCollider>(obj);
+    Collider* ptr = collider.get();
+    obj->addCollider(std::move(collider));
+    return ptr;
+}
 Collider* Engine::createGameEndCollider(GameObj* obj, bool win) {
     std::unique_ptr<Collider> collider = std::make_unique<endCollider>(obj, win);
     Collider* ptr = collider.get();
@@ -85,48 +88,50 @@ void Engine::resetColliders() {
 
 
 
+void Engine::tick() {
+    moveObjs(); // handles all motions that aren't related to user input
+    if (playerObj) playerObj->moveBy(0,0); // reset player to stationary
 
-void Engine::play() {
     renderCells();
-    
-    Action a;
-
-    while(playing) {
-
-        a = getAction();
-        if (playerObj) { // moveBy() sets vector of motion. tick() does the moving
-            if ( UP == a ) {
-                playerObj->moveBy(-1,0);
-                updateViews(19, 77, 'w');
-            }
-            else if ( DOWN == a ) {
-                playerObj->moveBy(1,0);
-                updateViews(19, 77, 's');
-            }
-            else if ( RIGHT == a ) {
-                playerObj->moveBy(0,1);
-                updateViews(19, 77, 'd');
-            }
-            else if ( LEFT == a ) {
-                playerObj->moveBy(0,-1);
-                updateViews(19, 77, 'a');
-            }
-            else if ( QUIT == a ) {
-                playing = false;
-                break;
-            }
-        }
-
-        tick(); // handles all motions that aren't related to user input
-        if (playerObj) playerObj->moveBy(0,0); // reset player to stationary
-
-        renderCells();
-        displayViews();
-    }
-    
+    displayViews();
 }
 
-void Engine::tick() {
+
+// void Engine::play() {    
+//     Action a;
+
+//     while(playing) {
+
+//         a = getAction();
+//         if (playerObj) { // moveBy() sets vector of motion. tick() does the moving
+//             if ( UP == a ) {
+//                 playerObj->moveBy(-1,0);
+//                 updateViews(19, 77, 'w');
+//             }
+//             else if ( DOWN == a ) {
+//                 playerObj->moveBy(1,0);
+//                 updateViews(19, 77, 's');
+//             }
+//             else if ( RIGHT == a ) {
+//                 playerObj->moveBy(0,1);
+//                 updateViews(19, 77, 'd');
+//             }
+//             else if ( LEFT == a ) {
+//                 playerObj->moveBy(0,-1);
+//                 updateViews(19, 77, 'a');
+//             }
+//             else if ( QUIT == a ) {
+//                 playing = false;
+//                 break;
+//             }
+//         }
+
+//         tick();
+//     }
+    
+// }
+
+void Engine::moveObjs() {
     for (auto& o : objList) {
         o->move();
     }
