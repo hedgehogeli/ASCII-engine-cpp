@@ -1,5 +1,7 @@
 #include "gameObj.h"
 #include "engine.h"
+#include "collider.h"
+#include "mvmt.h"
 #include <algorithm>
 #include <string>
 #include "ncurses.h"
@@ -8,13 +10,11 @@
 #include <iostream>
 
 GameObj::GameObj(size_t r, size_t c, int height, Engine& e, char ch): r{r}, c{c}, height{height}, 
-  e{e}, mvmtY{0}, mvmtX{0} , wait{1}, period{1} 
-  {
+  e{e}, mvmtY{0}, mvmtX{0} , wait{1}, period{1}, inPlay{true} {
     bmp[std::make_pair(0, 0)] = ch;
 }
 GameObj::GameObj(size_t r, size_t c, int height, Engine& e, size_t w, size_t l, char ch):
-  r{r}, c{c}, height{height}, e{e}, mvmtY{0}, mvmtX{0}, wait{1}, period{1}
-  {
+  r{r}, c{c}, height{height}, e{e}, mvmtY{0}, mvmtX{0}, wait{1}, period{1}, inPlay{true} {
     for (int x=0; x<w; ++x) {
         for (int y=0; y<l; ++y) {
             bmp[std::make_pair(0,0)] = ch;
@@ -22,8 +22,7 @@ GameObj::GameObj(size_t r, size_t c, int height, Engine& e, size_t w, size_t l, 
     }
 }
 GameObj::GameObj(size_t r, size_t c, int height, Engine& e, std::map<std::pair<int,int>, char> bitmap):
-  r{r}, c{c}, height{height}, e{e}, mvmtY{0}, mvmtX{0}, wait{1}, period{1}, 
-  bmp{bitmap} {}
+  r{r}, c{c}, height{height}, e{e}, mvmtY{0}, mvmtX{0}, wait{1}, period{1}, bmp{bitmap}, inPlay{true} {}
 
 
 void GameObj::computeCells() {
@@ -50,8 +49,8 @@ void GameObj::computeCells() {
     }
 
     // new rectangular dimensions
-    length = maxc - minc + 1;
-    width = maxr - minr + 1;
+    length = maxc - minc;
+    width = maxr - minr;
 }
 
 void GameObj::reindexBmp(int dY, int dX) {
@@ -81,16 +80,44 @@ char GameObj::charAt(size_t row, size_t col) const {
     // return 
 }
 
-Collider* GameObj::addCollider(std::unique_ptr<Collider> c){
+void GameObj::addCollider(std::unique_ptr<Collider> c){
     colliders.emplace_back(std::move(c));
-    return (colliders.end())->get();
+    // return (colliders.end())->get();
 }
+
+void GameObj::addMvmt(std::unique_ptr<Mvmt> m) {
+    movements.emplace_back(std::move(m));
+}
+void GameObj::clearMvmts() { // likely results in dangling ptrs
+    movements.clear();
+}
+
+
+
 
 void GameObj::destroyCharAt(Cell& posn) {
     posn.rmObj(this);
     bmp.erase(std::make_pair(posn.r - r, posn.c - c));
     auto it = std::find(occupiedCells.begin(), occupiedCells.end(), &posn);
     occupiedCells.erase(it);
+}
+
+void GameObj::selfDestruct() {
+    for (auto cell : occupiedCells) {
+        cell->rmObj(this);
+    }
+    bmp.clear();
+    height = -1;
+    e.ignore(this);
+    inPlay = false;
+}
+
+
+
+void GameObj::runMvmts() {
+    for (auto& it : movements) {
+        it->affectMvmt();
+    }
 }
 
 
@@ -104,7 +131,6 @@ void GameObj::mvmtCollide() {
 }
 void GameObj::dmgCollide(Cell& cell) {
     for (auto& it : colliders) {
-        // it->runCollision(cell);
         it->collide(cell);
     }
 }
@@ -134,17 +160,13 @@ void GameObj::resetColliders() {
 
 // attempt to move by 'this's defined motion vector (mvmtX, mvmtY)
 void GameObj::move() {
-
-    // TODO: mvmt objects should mutate mvmt vector !!!
+    runMvmts(); // applies all Mvmt modifiers to 'this'
     
     // TODO: maybe player motion should be treated differently?
     if (wait) { // check if there are ticks to wait until mvmt
         --wait;
         return; 
-    } else { wait = period; } // reset ticks
-    
-    // TODO: CHECK FOR WALL BOUNDS HERE 
-    // the rectangular dimensions should be calculated in computeCells !
+    } else { wait = period; } // reset ticks, and proceed with move
 
     computeCollisions(); // move and see if collide. if collide, then act on collisions. 
     // may need to call tryMove to see if resulting mutations on mvmtXY result in further collision
@@ -158,6 +180,8 @@ void GameObj::move() {
         height = -1;
         setMvmt(0,0);
         e.createStopCollider(this);
+        e.ignore(this);
+        inPlay = false;
     }
     
 }
@@ -175,11 +199,11 @@ void GameObj::computeCollisions() {
             break;
         }
 
-        Cell& curCell = e.getGrid()[toR][toC]; // get its destination  cell
-        if (curCell.contains(this)) { continue; } // i am already in destination
-        bool collision = collideAt(curCell); // collide into destination cell
-        if (collision) { dmgCollide(e.getGrid()[r+y][x+c]); }
-        // ^ any pixel destruction and mvmt mutation due to collision happens here
+        Cell& toCell = e.getGrid()[toR][toC]; // get its destination  cell
+        if (toCell.contains(this)) { continue; } // i am already in destination
+        if (collideAt(toCell)) { 
+            dmgCollide(e.getGrid()[r+y][x+c]); } // collide into destination cell
+        // ^ any pixel destruction and mvmt mutation due to collision happens here, on own currently occupying cell
 
         // MY R AND C ARE NOT UPDATED, SO I'M NOT ACTUALLY OCCUPYING THE CURCELL. 
     }

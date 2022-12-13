@@ -3,7 +3,7 @@
 
 #include "collider.h"
 
-class stopCollider : public Collider {
+class stopCollider : virtual public Collider {
   public:
     stopCollider(GameObj *obj);
     void stopMvmt();

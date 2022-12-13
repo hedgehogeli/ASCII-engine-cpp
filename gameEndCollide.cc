@@ -2,7 +2,7 @@
 #include "gameObj.h"
 #include "engine.h"
 
-endCollider::endCollider(GameObj *obj, bool win): stopCollider{obj}, winOnCollide{win} {}
+endCollider::endCollider(GameObj *obj, bool win): stopCollider{obj}, winOnCollide{win}, Collider{obj} {}
 
 void endCollider::end() {
     if (winOnCollide) { (obj->getEngine()).terminate("YOU WIN"); } 

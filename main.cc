@@ -1,81 +1,41 @@
 #include "engine.h"
 #include "ncurses.h"
-#include <string>
-#include <iostream>
 
-#include <fstream>
-
-class Engine;
 
 int main(int argc, char* argv[]) {
     initscr();
     noecho();
     curs_set(0);
     refresh();
-
     Engine e(20, 78);
+
+    std::map<std::pair<int,int>, char> playerBmp {
+        {{0,0}, '='}, {{0,1}, '='}, {{0,2}, '='}, {{0,3}, '='}, {{0,4}, '='}, {{0,5}, '='},
+        {{1,0}, '='}, {{1,1}, '='}, {{1,2}, '='}, {{1,3}, '='}, {{1,4}, '='}, {{1,5}, '='} };
+    GameObj* player = e.spawnBmp(18,32,0,playerBmp);
+    e.setPlayer(player);
+    Collider* c1 = e.createStopCollider(player);
+    player->setPeriod(0); 
+
+    std::map<std::pair<int,int>, char> block {
+        {{0,0}, 'X'}, {{0,1}, 'X'}, {{0,2}, 'X'},
+        {{1,0}, 'X'}, {{1,1}, 'X'}, {{1,2}, 'X'} };
     
-    GameObj* p = e.spawnChar(5,5,0,'o');
-    e.setPlayer(*p);
-    Collider* c1 = e.createStopCollider(p); // it should return the collider 
-    p->setPeriod(0);
 
-    GameObj* obstacle = e.spawnChar(18,51,0,'X');
-    e.createStopCollider(obstacle);
+    std::vector<GameObj*> blocks {};
 
-    GameObj* falling = e.spawnChar(3,3,0,'M');
-    falling->setMvmt(1, 1);
-    // falling->setPeriod(1); 
-    Collider* c3 = e.createBounceCollider(falling);
-    
-
-    GameObj* win = e.spawnChar(19,77,0,'W');
-    Collider* winner = e.createGameEndCollider(win, true);
-
-    GameObj* lose = e.spawnChar(0,77,0,'L');
-    Collider* loser = e.createGameEndCollider(lose, false);
-
-
-    std::map<std::pair<int,int>, char> b {
-                  {{0,1}, '0'}, 
-    {{1,0}, '0'}, {{1,1}, '0'}, {{1,2}, '0'}, 
-                  {{2,1}, '0'}, 
-                  {{3,1}, 'V'}
-    }; 
-    GameObj* bmp = e.spawnBmp(5, 50, 0, b);
-    Collider* c5 = e.createBounceCollider(bmp);
-    Collider* c4 = e.createDmgCollider(bmp);
-    bmp->setMvmt(1, 0);
-
-    
-    Action a;
-    while (e.playing) {
-        a = e.getInput();
-        
-        GameObj* playerObj = p;
-        // moveBy() sets vector of motion. tick() does the moving
-        if ( UP == a ) { playerObj->moveBy(-1,0); }
-        else if ( DOWN == a ) { playerObj->moveBy(1,0); }
-        else if ( RIGHT == a ) { playerObj->moveBy(0,1); }
-        else if ( LEFT == a ) { playerObj->moveBy(0,-1); }
-        else if ( QUIT == a ) {
-            e.playing = false;
-            break;
+    for (int r=2; r<7; r+=2) {
+        for (int c=0; c<35; c+=4) {
+            GameObj* b = e.spawnBmp(r,c,0,block);
+            Collider* collide = e.createDmgCollider(b); 
+            e.createStopCollider(b);
+            // collider to destroy whole block
+            blocks.push_back(b);
         }
-        
-
-        e.tick();
     }
     
 
-    // auto ptr = reinterpret_cast<std::uintptr_t>(c3); 
-    // e.updateViews(1, std::to_string(ptr));
-    // e.displayViews();
-    // timeout(10000);
-    // getch();
-    
-    // std::cout << debug << std::endl;
-    
 
-    endwin();
+
+
 }

@@ -3,7 +3,7 @@
 
 #include "stopCollide.h"
 
-class endCollider : public stopCollider {
+class endCollider : virtual public stopCollider {
     bool winOnCollide;
   public:
     endCollider(GameObj *obj, bool win);

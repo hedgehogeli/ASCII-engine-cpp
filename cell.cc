@@ -26,7 +26,7 @@ char Cell::getChar() const {
 
 std::vector<GameObj*> Cell::getObjsAtHeight(int h) {
     std::vector<GameObj*> collidingObjs;
-    if (!objList.empty()) {
+    if (h >= 0 && !objList.empty()) {
         auto it = objList.begin();
         auto end = objList.end();
         while (it!=end  &&  (*it)->getHeight() > h) { ++it; }
