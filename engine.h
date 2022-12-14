@@ -18,6 +18,7 @@ class Engine : public Model{
     GameObj* playerObj;
 
     void moveObjs();
+    GameObj* spawn(std::unique_ptr<GameObj>& obj);
 
   public:
     bool playing;
@@ -30,14 +31,12 @@ class Engine : public Model{
     void setPlayer(GameObj* o) { playerObj = o; }
     // GameObj* getPlayer() { return playerObj; }
 
-    GameObj* spawn(std::unique_ptr<GameObj>& obj);
     GameObj* spawnChar(size_t row, size_t col, int height, char ch);
     GameObj* spawnRect(size_t row, size_t col, int height, size_t w, size_t l, char ch);
     GameObj* spawnBmp(size_t row, size_t col, int height, std::map<std::pair<int,int>, char> bitmap);
 
     template <typename T> Collider* createCollider(GameObj* obj);
 
-    // template <typename T> Collider* Engine::createCollider(GameObj* obj);    
     Collider* createStopCollider(GameObj* obj);
     Collider* createBounceCollider(GameObj* obj);
     Collider* createDmgCollider(GameObj* obj);
