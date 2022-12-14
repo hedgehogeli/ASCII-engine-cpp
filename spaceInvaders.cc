@@ -75,10 +75,7 @@ int main(int argc, char* argv[]) {
                 e.createDmgCollider(projectile);
                 e.createBoundDestroyCollider(projectile);
                 projectile->setPeriod(1);
-
-                // projectile->move();
-
-                fireCD = 3; // 3 is good for showcasing, 8 maybe
+                fireCD = 3; // 3 is good for showcasing, 8 for actual game maybe
             }
         }
         else if ( QUIT == a ) {

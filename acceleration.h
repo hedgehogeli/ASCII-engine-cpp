@@ -10,3 +10,4 @@ class Acceleration : public Mvmt {
 };
 
 #endif
+

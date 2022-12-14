@@ -9,7 +9,7 @@
                 "-g",
                 "${fileDirname}/*.cc",
                 "-o",
-                "${fileDirname}/${fileBasenameNoExtension}",
+                "${fileDirname}/vs",
                 "-lncurses",
             ],
             "options": {

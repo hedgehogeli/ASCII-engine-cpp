@@ -34,6 +34,10 @@ class GameObj {
     void computeCollisions();
     void moveCoords();
 
+    void mvmtCollide();
+    void dmgCollide(Cell& posn);
+    bool collideAt(Cell& posn);
+
   public:
     bool inPlay;
 
@@ -74,11 +78,8 @@ class GameObj {
 
     // std::map<Cell*, std::vector<GameObj*>> computeCollisions(int row, int col);
     
-    void mvmtCollide();
-    void dmgCollide(Cell& posn);
-    void destroyCharAt(Cell& posn);
+    void destroyCharAt(Cell& posn); 
     void selfDestruct();
-    bool collideAt(Cell& posn);
     void resetColliders();
     
     void move();

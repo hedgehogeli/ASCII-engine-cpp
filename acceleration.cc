@@ -6,3 +6,4 @@ Acceleration::Acceleration(GameObj *obj, int ddY, int ddX): Mvmt{obj}, ddY{ddY},
 void Acceleration::affect() {
     obj->addMvmt(ddY, ddX);
 }
+

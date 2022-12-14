@@ -4,13 +4,14 @@
 class GameObj;
 
 class Mvmt {
+    virtual void affect() = 0;
   protected:
     GameObj* obj;
     int waitTicks;
     int waitPeriod; // how many ticks left until apply
     
 
-    virtual void affect() = 0;
+    
   public:
     Mvmt(GameObj *obj);
     // void resetCollision() { collided = false; }

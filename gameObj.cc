@@ -17,7 +17,7 @@ GameObj::GameObj(size_t r, size_t c, int height, Engine& e, size_t w, size_t l, 
   r{r}, c{c}, height{height}, e{e}, mvmtY{0}, mvmtX{0}, wait{1}, period{1}, inPlay{true} {
     for (int x=0; x<w; ++x) {
         for (int y=0; y<l; ++y) {
-            bmp[std::make_pair(0,0)] = ch;
+            bmp[std::make_pair(y,x)] = ch;
         }
     }
 }
@@ -160,13 +160,13 @@ void GameObj::resetColliders() {
 
 // attempt to move by 'this's defined motion vector (mvmtX, mvmtY)
 void GameObj::move() {
-    runMvmts(); // applies all Mvmt modifiers to 'this'
-    
-    // TODO: maybe player motion should be treated differently?
+
     if (wait) { // check if there are ticks to wait until mvmt
         --wait;
         return; 
     } else { wait = period; } // reset ticks, and proceed with move
+
+    runMvmts(); // applies all Mvmt modifiers to 'this'
 
     computeCollisions(); // move and see if collide. if collide, then act on collisions. 
     // may need to call tryMove to see if resulting mutations on mvmtXY result in further collision

@@ -7,8 +7,10 @@ Cell::Cell(size_t r, size_t c): r{r}, c{c},
 
 void Cell::addObj(GameObj* o) { // insert obj to list
     auto it = objList.end();
-    while ( *(--it) && (*it)->getHeight() < o->getHeight()) {}
-    objList.insert(++it, o);
+    for (auto it = objList.begin(); it != objList.end(); ++it) {
+        if ((*it)->getHeight() <= o->getHeight()) break;
+    }
+    objList.insert(it, o);
 }
 
 void Cell::rmObj(GameObj* o) { // rm obj from list
